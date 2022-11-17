@@ -5,7 +5,18 @@ import preprocess from 'svelte-preprocess';
 const config = {
 	// Consult https://github.com/sveltejs/svelte-preprocess
 	// for more information about preprocessors
-	preprocess: preprocess(),
+	preprocess: [
+		preprocess({
+			scss: {
+				prependData: `
+					@use 'sass:map' as *;
+					@use 'sass:list' as *;
+				`,
+				outputStyle: 'compressed'
+			},
+			preserve: ['ld+json']
+		})
+	],
 
 	kit: {
 		adapter: adapter()
