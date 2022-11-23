@@ -1,4 +1,4 @@
-import type { ITodo, ITodoBase } from '$lib/types';
+import type { ITodo, ITodoBase, ITag } from '$lib/types';
 
 export const createTodo = (todoBase: ITodoBase): ITodo => {
 	return {
@@ -14,5 +14,12 @@ export const createTodoBase = (): ITodoBase => {
 		description: '',
 		reward: 0,
 		tags: []
+	};
+};
+
+export const createTag = (title: string): ITag => {
+	return {
+		UUID: crypto.randomUUID(),
+		title: title
 	};
 };

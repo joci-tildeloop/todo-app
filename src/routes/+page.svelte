@@ -1,34 +1,48 @@
 <script lang="ts">
-	import type { ITodo } from '$lib/types';
+	import type { ITodo, ITodoBase } from '$lib/types';
 
 	import Icon from '$components/Icon.svelte';
 	import IconDefinitions from '$components/IconDefinitions.svelte';
-	import Modal from '$components/Modal.svelte';
+	import ModalTodo from '$components/ModalTodo.svelte';
 	import Todo from '$components/Todo.svelte';
-	import { createTodo, createTodoBase } from '$/lib/utils/todoUtils';
-	import { createTag } from '$/lib/utils/tagUtils';
+	import { createTodo, createTodoBase } from '$/lib/utils/initializers';
 
 	let showModal = false;
-	let showTagInput = false;
-	let newTag = '';
-	let newTodoBase = createTodoBase();
+	let newTodo: ITodo | ITodoBase = createTodoBase();
 	let todos: Array<ITodo> = [];
 
-	const handleSubmit = (event: Event) => {
-		todos = [...todos, createTodo(newTodoBase)];
-		newTodoBase = createTodoBase();
+	const handleModalSubmit = (event: Event) => {
+		if ('UUID' in newTodo) {
+			newTodo.updated_at = Date.now();
+			todos = [
+				...todos.filter((todo) => {
+					todo.UUID !== newTodo.UUID;
+				}),
+				newTodo
+			];
+		} else {
+			todos = [...todos, createTodo(newTodo)];
+		}
+		newTodo = createTodoBase();
 		showModal = false;
 	};
 
-	const handleClose = (event: Event) => {
-		newTodoBase = createTodoBase();
+	const handleModalClose = (event: Event) => {
+		newTodo = createTodoBase();
 		showModal = false;
 	};
 
-	const addTag = (event: Event) => {
-		newTodoBase.tags = [...newTodoBase.tags, createTag(newTag)];
-		newTag = '';
-		showTagInput = false;
+	const handleTodoRemove = (event: CustomEvent) => {
+		todos = todos.filter((todo) => {
+			todo.UUID !== event.detail;
+		});
+	};
+
+	const handleTodoEdit = (event: CustomEvent) => {
+		newTodo = todos.find((todo) => {
+			todo.UUID === event.detail;
+		});
+		showModal = true;
 	};
 </script>
 
@@ -37,7 +51,7 @@
 		type="text"
 		class="title-input-main"
 		placeholder="Name a new todo..."
-		bind:value={newTodoBase.title}
+		bind:value={newTodo.title}
 	/>
 	<button type="submit" class="input-submit">
 		<Icon name="plus" />
@@ -46,54 +60,21 @@
 
 <div class="todos">
 	{#each todos as todo (todo.UUID)}
-		<Todo {todo} />
+		<Todo {todo} on:edit={handleTodoEdit} on:remove={handleTodoRemove} />
 	{:else}
-		<p>Add some tasks!</p>
+		<p>I see no TODOs? 🧐</p>
 	{/each}
 </div>
 
 {#if showModal}
-	<Modal on:close={handleClose}>
-		<h2>Create a todo</h2>
-		<hr />
-		<span>
-			<label for="modal-input-title">Title: </label>
-			<input type="text" id="modal-input-title" bind:value={newTodoBase.title} />
-		</span>
-		<span>
-			<label for="modal-input-description">Description: </label>
-			<input type="textarea" id="modal-input-description" bind:value={newTodoBase.description} />
-		</span>
-		<span>
-			<label for="modal-input-reward">Reward: </label>
-			<input type="number" class="modal-input-reward" bind:value={newTodoBase.reward} />
-		</span>
-		<span>
-			<label for="tag-container">
-				<Icon name="label" />
-			</label>
-			<div id="tag-container">
-				{#each newTodoBase.tags as tag (tag.UUID)}
-					<div class="pill">{tag.title}</div>
-				{/each}
-				{#if showTagInput}
-					<form on:submit|preventDefault={addTag}>
-						<!-- svelte-ignore a11y-autofocus -->
-						<input autofocus type="text" class="modal-input-tag" bind:value={newTag} />
-					</form>
-				{:else}
-					<button type="text" class="modal-add-tag" on:click={(e) => (showTagInput = true)}>
-						Add tag
-					</button>
-				{/if}
-			</div>
-		</span>
-		<button on:click={handleSubmit}> Submit </button>
-	</Modal>
+	<ModalTodo {newTodo} on:close={handleModalClose} on:submit={handleModalSubmit} />
 {/if}
 
 <IconDefinitions />
 
 <style>
-	/* your styles go here */
+	.todos {
+		display: flex;
+		flex-direction: column;
+	}
 </style>
