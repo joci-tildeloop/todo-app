@@ -1,5 +1,6 @@
 <script>
 	import Icon from '$components/Icon.svelte';
+	import IconDefinitions from '$components/IconDefinitions.svelte';
 </script>
 
 <header>
@@ -15,6 +16,8 @@
 </header>
 
 <slot />
+
+<IconDefinitions />
 
 <style lang="scss">
 	header {

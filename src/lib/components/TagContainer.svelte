@@ -1,8 +1,20 @@
 <script lang="ts">
 	import type { ITag } from '$lib/types';
+	import { createEventDispatcher } from 'svelte';
 	import Icon from './Icon.svelte';
 
 	export let tags: Array<ITag> = [];
+	export let extendable = false;
+
+	let newTag = '';
+	let showTagInput = false;
+
+	const dispatch = createEventDispatcher<{ extend: string }>();
+	const extend = (event: Event) => {
+		dispatch('extend', newTag);
+		showTagInput = false;
+		newTag = '';
+	};
 </script>
 
 <div class="tag-container">
@@ -12,7 +24,18 @@
 	{#each tags as tag (tag.UUID)}
 		<div class="tag">{tag.title}</div>
 	{/each}
-	<slot />
+	{#if extendable}
+		{#if showTagInput}
+			<form on:submit|preventDefault={extend}>
+				<!-- svelte-ignore a11y-autofocus -->
+				<input autofocus type="text" class="modal-input-tag" bind:value={newTag} />
+			</form>
+		{:else}
+			<button type="text" class="modal-add-tag" on:click={(e) => (showTagInput = true)}>
+				Add tag
+			</button>
+		{/if}
+	{/if}
 </div>
 
 <style>

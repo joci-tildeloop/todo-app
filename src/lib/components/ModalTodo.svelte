@@ -1,22 +1,18 @@
 <script lang="ts">
 	import type { ITodo, ITodoBase } from '$lib/types';
 
-	import { createEventDispatcher } from 'svelte';
+	import { createEventDispatcher, onMount } from 'svelte';
 	import { createTag } from '$/lib/utils/initializers';
 	import Modal from '$components/Modal.svelte';
 	import TagContainer from '$components/TagContainer.svelte';
+	import { selectInputText } from '$/lib/utils/eventHandlers';
 
 	export let tempTodo: ITodo | ITodoBase;
 
-	let newTag = '';
-	let showTagInput = false;
-
 	const dispatch = createEventDispatcher();
 
-	const addTag = (event: Event) => {
-		tempTodo.tags = [...tempTodo.tags, createTag(newTag)];
-		newTag = '';
-		showTagInput = false;
+	const addTag = (event: CustomEvent<string>) => {
+		tempTodo.tags = [...tempTodo.tags, createTag(event.detail)];
 	};
 </script>
 
@@ -29,29 +25,33 @@
 	<hr />
 	<span>
 		<label for="modal-input-title">Title: </label>
-		<input type="text" id="modal-input-title" bind:value={tempTodo.title} />
+		<input
+			type="text"
+			id="modal-input-title"
+			bind:value={tempTodo.title}
+			on:focus={selectInputText}
+		/>
 	</span>
 	<span>
 		<label for="modal-input-description">Description: </label>
-		<input type="textarea" id="modal-input-description" bind:value={tempTodo.description} />
+		<input
+			type="textarea"
+			id="modal-input-description"
+			bind:value={tempTodo.description}
+			on:focus={selectInputText}
+		/>
 	</span>
 	<span>
 		<label for="modal-input-reward">Reward: </label>
-		<input type="number" class="modal-input-reward" bind:value={tempTodo.reward} />
+		<input
+			type="number"
+			class="modal-input-reward"
+			bind:value={tempTodo.reward}
+			on:focus={selectInputText}
+		/>
 	</span>
 	<span>
-		<TagContainer tags={tempTodo.tags}>
-			{#if showTagInput}
-				<form on:submit|preventDefault={addTag}>
-					<!-- svelte-ignore a11y-autofocus -->
-					<input autofocus type="text" class="modal-input-tag" bind:value={newTag} />
-				</form>
-			{:else}
-				<button type="text" class="modal-add-tag" on:click={(e) => (showTagInput = true)}>
-					Add tag
-				</button>
-			{/if}
-		</TagContainer>
+		<TagContainer tags={tempTodo.tags} extendable={true} on:extend={addTag} />
 	</span>
 	<button
 		on:click={() => {

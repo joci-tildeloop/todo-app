@@ -2,7 +2,6 @@
 	import type { ITodo, ITodoBase } from '$lib/types';
 
 	import Icon from '$components/Icon.svelte';
-	import IconDefinitions from '$components/IconDefinitions.svelte';
 	import ModalTodo from '$components/ModalTodo.svelte';
 	import Todo from '$components/Todo.svelte';
 	import { createTodo, createTodoBase } from '$/lib/utils/initializers';
@@ -65,8 +64,6 @@
 {#if showModal}
 	<ModalTodo {tempTodo} on:close={handleModalClose} on:submit={handleModalSubmit} />
 {/if}
-
-<IconDefinitions />
 
 <style>
 	.todos {

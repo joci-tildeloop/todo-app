@@ -6,8 +6,6 @@
 	const close = () => dispatch('close');
 
 	const handleKeyDown = (e: KeyboardEvent) => {
-		console.log(e.key);
-
 		if (e.key === 'Escape') {
 			close();
 			return;
