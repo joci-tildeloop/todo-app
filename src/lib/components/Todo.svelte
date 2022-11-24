@@ -6,7 +6,7 @@
 
 	export let todo: ITodo;
 
-	const dispatch = createEventDispatcher();
+	const dispatch = createEventDispatcher<{ edit: ITodo; remove: string }>();
 </script>
 
 <div class="todo-container">
@@ -24,7 +24,7 @@
 	</div>
 
 	<div class="controls-container">
-		<button on:click={() => dispatch('edit', todo.UUID)}><Icon name="pencil" /> </button>
+		<button on:click={() => dispatch('edit', todo)}><Icon name="pencil" /> </button>
 		<button on:click={() => dispatch('remove', todo.UUID)}><Icon name="bin" /></button>
 	</div>
 </div>

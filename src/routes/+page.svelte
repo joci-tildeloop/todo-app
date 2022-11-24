@@ -32,16 +32,17 @@
 		showModal = false;
 	};
 
-	const handleTodoRemove = (event: CustomEvent) => {
-		todos = todos.filter((todo) => {
-			todo.UUID !== event.detail;
-		});
+	const handleTodoRemove = (event: CustomEvent<string>) => {
+		const result = todos.filter((todo) => todo.UUID !== event.detail);
+		if (result) {
+			todos = result;
+		} else {
+			// handle error
+		}
 	};
 
-	const handleTodoEdit = (event: CustomEvent) => {
-		newTodo = todos.find((todo) => {
-			todo.UUID === event.detail;
-		});
+	const handleTodoEdit = (event: CustomEvent<ITodo>) => {
+		newTodo = event.detail;
 		showModal = true;
 	};
 </script>
