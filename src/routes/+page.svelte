@@ -8,27 +8,27 @@
 	import { createTodo, createTodoBase } from '$/lib/utils/initializers';
 
 	let showModal = false;
-	let newTodo: ITodo | ITodoBase = createTodoBase();
+	let tempTodo: ITodo | ITodoBase = createTodoBase();
 	let todos: Array<ITodo> = [];
 
 	const handleModalSubmit = (event: Event) => {
-		if ('UUID' in newTodo) {
-			const id = newTodo.UUID;
+		if ('UUID' in tempTodo) {
+			const id = tempTodo.UUID;
 			todos = todos.map((todo) => {
 				if (todo.UUID === id) {
-					return { ...newTodo, updated_at: Date.now() } as ITodo;
+					return { ...tempTodo, updated_at: Date.now() } as ITodo;
 				}
 				return todo;
 			});
 		} else {
-			todos = [...todos, createTodo(newTodo)];
+			todos = [...todos, createTodo(tempTodo)];
 		}
-		newTodo = createTodoBase();
+		tempTodo = createTodoBase();
 		showModal = false;
 	};
 
 	const handleModalClose = (event: Event) => {
-		newTodo = createTodoBase();
+		tempTodo = createTodoBase();
 		showModal = false;
 	};
 
@@ -37,7 +37,7 @@
 	};
 
 	const handleTodoEdit = (event: CustomEvent<ITodo>) => {
-		newTodo = event.detail;
+		tempTodo = event.detail;
 		showModal = true;
 	};
 </script>
@@ -47,7 +47,7 @@
 		type="text"
 		class="title-input-main"
 		placeholder="Name a new todo..."
-		bind:value={newTodo.title}
+		bind:value={tempTodo.title}
 	/>
 	<button type="submit" class="input-submit">
 		<Icon name="plus" />
@@ -63,7 +63,7 @@
 </div>
 
 {#if showModal}
-	<ModalTodo {newTodo} on:close={handleModalClose} on:submit={handleModalSubmit} />
+	<ModalTodo {tempTodo} on:close={handleModalClose} on:submit={handleModalSubmit} />
 {/if}
 
 <IconDefinitions />

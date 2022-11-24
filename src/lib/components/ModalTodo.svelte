@@ -6,7 +6,7 @@
 	import Modal from '$components/Modal.svelte';
 	import TagContainer from '$components/TagContainer.svelte';
 
-	export let newTodo: ITodo | ITodoBase;
+	export let tempTodo: ITodo | ITodoBase;
 
 	let newTag = '';
 	let showTagInput = false;
@@ -14,7 +14,7 @@
 	const dispatch = createEventDispatcher();
 
 	const addTag = (event: Event) => {
-		newTodo.tags = [...newTodo.tags, createTag(newTag)];
+		tempTodo.tags = [...tempTodo.tags, createTag(newTag)];
 		newTag = '';
 		showTagInput = false;
 	};
@@ -29,18 +29,18 @@
 	<hr />
 	<span>
 		<label for="modal-input-title">Title: </label>
-		<input type="text" id="modal-input-title" bind:value={newTodo.title} />
+		<input type="text" id="modal-input-title" bind:value={tempTodo.title} />
 	</span>
 	<span>
 		<label for="modal-input-description">Description: </label>
-		<input type="textarea" id="modal-input-description" bind:value={newTodo.description} />
+		<input type="textarea" id="modal-input-description" bind:value={tempTodo.description} />
 	</span>
 	<span>
 		<label for="modal-input-reward">Reward: </label>
-		<input type="number" class="modal-input-reward" bind:value={newTodo.reward} />
+		<input type="number" class="modal-input-reward" bind:value={tempTodo.reward} />
 	</span>
 	<span>
-		<TagContainer tags={newTodo.tags}>
+		<TagContainer tags={tempTodo.tags}>
 			{#if showTagInput}
 				<form on:submit|preventDefault={addTag}>
 					<!-- svelte-ignore a11y-autofocus -->
