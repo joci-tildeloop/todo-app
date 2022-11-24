@@ -13,13 +13,13 @@
 
 	const handleModalSubmit = (event: Event) => {
 		if ('UUID' in newTodo) {
-			newTodo.updated_at = Date.now();
-			todos = [
-				...todos.filter((todo) => {
-					todo.UUID !== newTodo.UUID;
-				}),
-				newTodo
-			];
+			const id = newTodo.UUID;
+			todos = todos.map((todo) => {
+				if (todo.UUID === id) {
+					return { ...newTodo, updated_at: Date.now() } as ITodo;
+				}
+				return todo;
+			});
 		} else {
 			todos = [...todos, createTodo(newTodo)];
 		}
@@ -33,12 +33,7 @@
 	};
 
 	const handleTodoRemove = (event: CustomEvent<string>) => {
-		const result = todos.filter((todo) => todo.UUID !== event.detail);
-		if (result) {
-			todos = result;
-		} else {
-			// handle error
-		}
+		todos = todos.filter((todo) => todo.UUID !== event.detail);
 	};
 
 	const handleTodoEdit = (event: CustomEvent<ITodo>) => {
