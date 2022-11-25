@@ -26,8 +26,7 @@
 		}
 	};
 
-	const previously_focused =
-		typeof document !== 'undefined' && (document.activeElement as HTMLElement);
+	const previously_focused = document?.activeElement as HTMLElement;
 
 	if (previously_focused) {
 		onDestroy(() => {

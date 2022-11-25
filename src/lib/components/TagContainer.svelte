@@ -8,11 +8,14 @@
 
 	let newTag = '';
 	let showTagInput = false;
+	let extendButton: HTMLButtonElement;
+
+	$: extendButton?.focus();
 
 	const dispatch = createEventDispatcher<{ extend: string }>();
 	const extend = (event: Event) => {
 		dispatch('extend', newTag);
-		showTagInput = false;
+		showTagInput = !showTagInput;
 		newTag = '';
 	};
 </script>
@@ -31,7 +34,12 @@
 				<input autofocus type="text" class="modal-input-tag" bind:value={newTag} />
 			</form>
 		{:else}
-			<button type="text" class="modal-add-tag" on:click={(e) => (showTagInput = true)}>
+			<button
+				type="text"
+				class="modal-add-tag"
+				on:click={(e) => (showTagInput = true)}
+				bind:this={extendButton}
+			>
 				Add tag
 			</button>
 		{/if}
